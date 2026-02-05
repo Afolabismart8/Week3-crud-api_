@@ -15,10 +15,19 @@ let todos = [
   { id: 1, task: 'Learn Node.js', completed: false },
   { id: 2, task: 'Build CRUD API', completed: false },
 ];
+//GET ALL TODOS
+app.get ('/todos' , (req, res) => {
+res.status(200).json(todos)
+});
 
-// GET All – Read
-app.get('/todos', (req, res) => {
-  res.status(200).json(todos); // Send array as JSON
+// GET ID – Read
+app.get('/todos/:id', (req, res) => {
+  const id = parseInt(req.params.id);
+  const todo = todos.find(t => t.id == id);
+  if (!todo) {
+      return res.status(404).json({message: 'Todo not found'})
+  }
+  res.json(todo);
 });
 
 // POST New – Create
@@ -26,6 +35,28 @@ app.post('/todos', createTodoValidator, (req, res) => {
   const newTodo = { id: todos.length + 1, ...req.body }; // Auto-ID
   todos.push(newTodo);
   res.status(201).json(newTodo); // Echo back
+});
+
+//Post validation 
+app.post('/todos/', (req, res) => {
+  const { task} = req.body;
+  if (!task || task.trim() == '') {
+    return res.status(400).json({
+      message:"Task is required"
+    });
+  }
+  const newTodo ={
+    id: Date.now(), task,
+    completed: false
+  };
+  todos.push(newTodo);
+  res.status(202).json(newTodo)
+});
+
+//GET ACTIVE TODOS
+app.get ('/todos/active', (req,res) => {
+  const activeTodos = todos.filter ( t => !t.completed);
+  res.json(activeTodos);
 });
 
 // PATCH Update – Partial
