@@ -1,5 +1,6 @@
 const express = require('express');
 const logger = require('./middleware/logger');
+require('dotenv').config();
 const {
   createTodoValidator,
   editTodoValidator,
@@ -88,5 +89,5 @@ app.get('/todos/completed', (req, res) => {
 
 app.use(errorHandler); // Error-handling middleware
 
-const PORT = 3002;
+const PORT = process.env.PORT || 2000;
 app.listen(PORT, () => console.log(`Server on port ${PORT}`));
